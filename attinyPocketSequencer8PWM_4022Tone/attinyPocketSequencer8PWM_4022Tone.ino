@@ -1,0 +1,108 @@
+/*
+*This code is for an attiny85 powered pocket sequencer and is part of an
+*instructable at http://www.instructables.com/id/Attiny-Pocket-Sequencer/ . 
+*
+*The following code was written by: Adam Berger
+*
+*You are free to use my code in anyway you'd like, as long as
+*you give credit where it is due. Thank you for your interest!
+*/
+const byte pot = 3, tonePin = 0, reset = 2, clock = 1, speaker = 4;
+const int MAX_NOTE_LENGTH = 8000, MAX_FREQ = 255, NUMBER_OF_STEPS = 8, POT_THRESHOLD = 20;
+int stepFreqs[] = {255,128,230,30,100,240,50,200};
+int stepSustains[] = {820,382,542,260,420,62,540,62};
+int tempo = 1000;
+
+unsigned long previousMillis, functionMillis;
+void setup(){
+  
+  //enable inpustepFreqsts
+  pinMode(pot, INPUT);
+  digitalWrite(pot, HIGH);
+  //enable outputs
+  pinMode(reset, OUTPUT);
+  pinMode(clock, OUTPUT);
+  pinMode(tonePin, OUTPUT);
+
+  //setFrequencies();
+  //functionMillis=millis();
+  setFrequencies();
+  TCCR1 = TCCR1 & 0b11111001; //timer pre-scaler divided by 8, slower speed of the processor
+  digitalWrite(reset, LOW);
+  delay(1);
+  digitalWrite(reset, HIGH);
+  delay(10);
+  digitalWrite(reset, LOW);
+  delay(1);
+
+}
+void loop(){
+  //for each step
+  TCCR1 = TCCR1 & 0b11111001; //timer pre-scaler divided by 8, slower speed of the processor
+
+  for(byte a=0; a<NUMBER_OF_STEPS; a++){
+    //turn LED on
+    digitalWrite(clock, LOW);
+    
+    //tempo logic/update tempo variable
+    previousMillis=millis();
+
+    analogWrite(speaker, stepFreqs[a]);
+    tone(tonePin, stepFreqs[a], stepSustains[a]);
+    
+    
+    while(millis()-previousMillis<tempo){      
+      tempo = 4 * map(analogRead(pot),POT_THRESHOLD ,1023,1, MAX_NOTE_LENGTH);
+      if(analogRead(pot)<20&&(millis()-functionMillis>5000))
+        setSustain();
+    }  
+  noTone(tonePin);
+  digitalWrite(clock, HIGH);
+  }
+
+}
+
+void setFrequencies(){
+  
+  for(byte a=0; a<NUMBER_OF_STEPS; a++){
+    //turn LED on
+    digitalWrite(clock, LOW);
+    delay(400);
+    //tempo logic/update tempo variable
+    while((analogRead(pot)>POT_THRESHOLD)){
+     previousMillis=millis();
+     int freq = map(analogRead(pot),POT_THRESHOLD,1023,0, MAX_FREQ);
+     if(analogRead(pot)<POT_THRESHOLD+10) freq=0;
+     stepFreqs[a] = freq;
+     analogWrite(speaker, stepFreqs[a]);
+     tone(tonePin, stepFreqs[a], stepSustains[a]);
+     functionMillis=millis();
+     while(millis()-functionMillis<200){
+      if(analogRead(pot)<POT_THRESHOLD) break;
+    }
+    }
+  digitalWrite(clock, HIGH);
+  }
+  functionMillis=millis();
+}
+
+void setSustain(){
+  for(byte a=0; a<NUMBER_OF_STEPS; a++){
+    //turn LED on
+    digitalWrite(clock, LOW);
+    delay(400);
+    //tempo logic/update tempo variable
+    while((analogRead(pot)>POT_THRESHOLD)){
+     stepSustains[a] = map(analogRead(pot),POT_THRESHOLD,1023,0, MAX_NOTE_LENGTH/100);
+     tone(tonePin, stepFreqs[a], stepSustains[a]);
+     functionMillis=millis();
+      while(millis()-functionMillis<(stepSustains[a]+(stepSustains[a]/2))){
+        //if(analogRead(pot)<20&&(millis()-functionMillis>50)) break;
+        if(analogRead(pot)<POT_THRESHOLD) break;
+    } 
+    digitalWrite(clock, HIGH);
+    }
+  }
+  functionMillis=millis();
+  
+}
