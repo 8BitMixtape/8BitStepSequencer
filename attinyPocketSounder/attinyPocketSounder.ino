@@ -40,6 +40,8 @@ unsigned long phaseLength = 1000;           // interval at which to blink (milli
 void setup() {
   // set the digital pin as output:
   pinMode(speakerPin, OUTPUT);
+  pinMode(potiPin, INPUT);
+  digitalWrite (potiPin, HIGH);
 }
 
 void loop()
