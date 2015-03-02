@@ -18,6 +18,6 @@ http://bergertech.com/projects/project.php?id=1
 
 # To Do
 * DONE - fix that timing issues
-* sustain? for the CV output
+* sustain/steplength for the CV output
 * make a board - prototype
 * put in tape
