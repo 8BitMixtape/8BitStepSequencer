@@ -19,5 +19,6 @@ http://bergertech.com/projects/project.php?id=1
 # To Do
 * DONE - fix that timing issues
 * sustain/steplength for the CV output
+* save last pattern in PROGMEM, possible?
 * make a board - prototype
 * put in tape
