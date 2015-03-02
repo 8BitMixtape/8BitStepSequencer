@@ -14,9 +14,10 @@ http://bergertech.com/projects/project.php?id=1
 # Sound modules
 * basic square wave synth on tiny85
 * Noise Generators on tiny85
+* Pitix Oscillator 8bit Synth from C. Haberer
 
 # To Do
-* fix that timing issues
-* sustain for the CV out put
+* DONE - fix that timing issues
+* sustain? for the CV output
 * make a board - prototype
 * put in tape
