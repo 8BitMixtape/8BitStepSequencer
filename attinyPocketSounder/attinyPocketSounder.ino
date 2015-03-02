@@ -41,7 +41,7 @@ void setup() {
   // set the digital pin as output:
   pinMode(speakerPin, OUTPUT);
   pinMode(potiPin, INPUT);
-  digitalWrite (potiPin, HIGH);
+  digitalWrite (potiPin, LOW);
 }
 
 void loop()
@@ -53,7 +53,9 @@ void loop()
   // the LED is bigger than the interval at which you want to
   // blink the LED.
   unsigned long currentMicros = micros();
-  phaseLength = 20 * (1023 - analogRead (potiPin));
+  phaseLength = 10 * (1023 - analogRead (potiPin));
+  
+  
   if(currentMicros - previousMicros >= phaseLength) {
     // save the last time you blinked the LED 
     previousMicros = currentMicros;   
@@ -67,5 +69,6 @@ void loop()
     // set the LED with the ledState of the variable:
     digitalWrite(speakerPin, pinState);
   }
+  
 }
 
